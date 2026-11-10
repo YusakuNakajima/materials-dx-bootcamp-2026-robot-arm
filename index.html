@@ -48,14 +48,49 @@
                 <p style="font-size: 0.6em;">材料DX Boot camp 2026 Day 2 ハンズオン<br>2026年11月11日 名古屋駅前イノベーションハブ</p>
             </section>
             <section>
-                <h2>このハンズオンの範囲</h2>
-                <ul>
+                <section>
+                    <h2>このハンズオンの地図</h2>
+                    <div style="display: flex; align-items: stretch; gap: 10px; font-size: 0.5em; text-align: left;">
+                        <div style="flex: 1.1; border: 2px solid #4fc3f7; border-radius: 10px; padding: 12px;">
+                            <h3 style="font-size: 1.4em; color: #4fc3f7; text-align: center;">今日のハンズオン</h3>
+                            <ul>
+                                <li>TCP・座標系の設定</li>
+                                <li>TP（ティーチングペンダント）で動かす</li>
+                                <li>Python から動かす</li>
+                                <li>指令の種類・ブレンド・精度</li>
+                            </ul>
+                        </div>
+                        <div style="align-self: center; font-size: 2.4em; color: #9ca3af;">&rarr;</div>
+                        <div style="flex: 1.1; border: 2px solid #86efac; border-radius: 10px; padding: 12px;">
+                            <h3 style="font-size: 1.4em; color: #86efac; text-align: center;">持ち帰ってできること</h3>
+                            <p style="margin: 0 0 6px;">研究室のロボットで…</p>
+                            <ul>
+                                <li>サンプルをつかんで決まった場所に置く（<strong>ピック&amp;プレース</strong>）</li>
+                                <li>Python の実験スクリプトに<strong>ロボット動作を組み込む</strong></li>
+                                <li>位置がずれたときに原因の見当がつく</li>
+                            </ul>
+                        </div>
+                        <div style="align-self: center; font-size: 2.4em; color: #9ca3af;">&rarr;</div>
+                        <div style="flex: 1.1; border: 2px dashed #fb923c; border-radius: 10px; padding: 12px;">
+                            <h3 style="font-size: 1.4em; color: #fb923c; text-align: center;">もっと高度なことへ</h3>
+                            <ul>
+                                <li>力制御、カメラ、シミュレーションなど</li>
+                                <li>→ <strong>ROS</strong> が必要</li>
+                            </ul>
+                            <p style="text-align: center; margin: 10px 0 0;"><strong>ゼロからのROS入門</strong><br><a href="https://nakajima.phd/zero_ros/" target="_blank" style="color: #3b82f6; text-decoration: underline;">nakajima.phd/zero_ros</a></p>
+                        </div>
+                    </div>
+                </section>
+                <section>
+                    <h2>このハンズオンの範囲</h2>
                     <ul>
-                        <li>ロボットアームの動作生成でよく使われる仕組みを学んでいきます。</li>
-                        <li>コードなどはUniversalRobotの例を扱います(他のメーカーでも概ね同じ機能があるはずです)。</li>
-                        <li>ブラウザで動くアプリで実際に動きを確かめます(インストール不要)。</li>
+                        <ul>
+                            <li>ロボットアームの動作生成でよく使われる仕組みを学んでいきます。</li>
+                            <li>コードなどはUniversalRobotの例を扱います(他のメーカーでも概ね同じ機能があるはずです)。</li>
+                            <li>ブラウザで動くアプリで実際に動きを確かめます(インストール不要)。</li>
+                        </ul>
                     </ul>
-                </ul>
+                </section>
             </section>
             <section>
                 <h2>オススメ参考資料</h2>
@@ -604,15 +639,17 @@ movec(p[0.35, -0.1, 0.25, 0, 3.14, 0],  # 経由点
                                 <li>リンク長の公差、原点オフセット</li>
                                 <li>TCP・ベース設置の測定誤差</li>
                             </ul>
+                            <p style="text-align: center; font-size: 1.2em;">目安: <strong>mm オーダー</strong></p>
                             <p style="color: #86efac;">毎回同じだけずれる<br>→ 校正・ティーチングで吸収できる</p>
                         </div>
                         <div style="flex: 1; border: 2px solid #fb923c; border-radius: 10px; padding: 12px;">
                             <h3 style="font-size: 1.4em; color: #fb923c; text-align: center;">② 時間変動</h3>
                             <ul>
-                                <li>暖機による熱ドリフト（0.05〜0.2 mm）</li>
+                                <li>暖機による熱ドリフト</li>
                                 <li>経年でバックラッシュが増える</li>
                             </ul>
-                            <p style="color: #fda4af;">校正では取れない</p>
+                            <p style="text-align: center; font-size: 1.2em;">目安: <strong>数十〜数百 µm</strong></p>
+                            <p style="color: #86efac;">校正では取れない</p>
                         </div>
                         <div style="flex: 1; border: 2px solid #f472b6; border-radius: 10px; padding: 12px;">
                             <h3 style="font-size: 1.4em; color: #f472b6; text-align: center;">③ 動作条件</h3>
@@ -620,10 +657,12 @@ movec(p[0.35, -0.1, 0.25, 0, 3.14, 0],  # 経由点
                                 <li>進入方向（バックラッシュ）</li>
                                 <li>速度、ペイロード、姿勢</li>
                             </ul>
-                            <p style="color: #fda4af;">同じ点でも指令の出し方で変わる</p>
+                            <p style="text-align: center; font-size: 1.2em;">目安: <strong>数十〜数百 µm</strong></p>
+                            <p style="color: #86efac;">同じ点でも指令の出し方で変わる</p>
                         </div>
                     </div>
-                    <p style="font-size: 0.65em; margin-top: 24px;">絶対誤差の<strong>大きさ</strong>を決めるのは①<br><strong>実務で悩まされる</strong>のは②と③</p>
+                    <p style="font-size: 0.45em; color: #9ca3af; margin: 8px 0 0;">※ 目安はオーダー感。機種・条件で大きく変わる</p>
+                    <p style="font-size: 0.65em; margin-top: 16px;">ラボのピック&amp;プレースなら<br>②③は<strong>それほど大きく影響しない</strong>ことが多い</p>
                     <aside class="notes">
                         質疑で聞かれたとき用:
                         ・電源の OFF/ON では位置はずれない（アブソリュートエンコーダが位置を保持している）。

@@ -335,9 +335,6 @@
                         </div>
                     </div>
                 </div>
-                <div class="mt-4 flex justify-center">
-                    <button id="update-pos-btn" class="bg-orange-600 hover:bg-orange-500 text-white font-bold py-2 px-6 rounded-lg">座標を更新</button>
-                </div>
             </div>
 
             <div class="step" style="--step: #86efac;">
@@ -1083,7 +1080,8 @@
         function setupUI() {
             document.getElementById('start-btn').addEventListener('click', startComparison);
             document.getElementById('reset-btn').addEventListener('click', resetScene);
-            document.getElementById('update-pos-btn').addEventListener('click', updatePositions);
+            ['start', 'via', 'end'].forEach(point => ['x', 'y', 'z'].forEach(axis =>
+                document.getElementById(`${point}-${axis}`).addEventListener('input', () => applyPointInput(point))));
             document.querySelectorAll('.capture-pos-btn').forEach(btn => btn.addEventListener('click', () => captureCurrentPosition(btn.dataset.point)));
             document.querySelectorAll('input[name="end-effector-type"]').forEach(radio => {
                 radio.addEventListener('change', (event) => {
@@ -1113,24 +1111,31 @@
             setupJogHold();
         }
 
-        function updatePositions() {
+        const pointNames = { start: '開始点', via: '中間点', end: '終了点' };
+        function getPointTarget(point) {
+            return { start: [startPos, startMarkerGroup], via: [viaPos, viaMarkerGroup], end: [endPos, endMarkerGroup] }[point];
+        }
+
+        // 座標欄を書き換えたらすぐ反映する (入力途中の値や届かない位置は反映しない)
+        function applyPointInput(point) {
             if (isAnimating) return;
             const errorMessage = document.getElementById('error-message');
+            const values = ['x', 'y', 'z'].map(axis => parseFloat(document.getElementById(`${point}-${axis}`).value));
+            if (values.some(v => !Number.isFinite(v))) return;
+            const pos = new THREE.Vector3(...values);
+            if (!calculateAnglesFor(pos)) { errorMessage.textContent = `${pointNames[point]}が可動範囲外です。`; return; }
             errorMessage.textContent = '';
-            const newStartPos = new THREE.Vector3( parseFloat(document.getElementById('start-x').value), parseFloat(document.getElementById('start-y').value), parseFloat(document.getElementById('start-z').value) );
-            const newEndPos = new THREE.Vector3( parseFloat(document.getElementById('end-x').value), parseFloat(document.getElementById('end-y').value), parseFloat(document.getElementById('end-z').value) );
-            const newViaPos = new THREE.Vector3( parseFloat(document.getElementById('via-x').value), parseFloat(document.getElementById('via-y').value), parseFloat(document.getElementById('via-z').value) );
-            if (!calculateAnglesFor(newStartPos)) { errorMessage.textContent = '開始点が可動範囲外です。'; return; }
-            if (!calculateAnglesFor(newEndPos)) { errorMessage.textContent = '終了点が可動範囲外です。'; return; }
-            if (!calculateAnglesFor(newViaPos)) { errorMessage.textContent = '中間点が可動範囲外です。'; return; }
-            startPos.copy(newStartPos);
-            endPos.copy(newEndPos);
-            viaPos.copy(newViaPos);
-            startMarkerGroup.position.copy(startPos);
-            endMarkerGroup.position.copy(endPos);
-            viaMarkerGroup.position.copy(viaPos);
+            const [vec, marker] = getPointTarget(point);
+            vec.copy(pos);
+            marker.position.copy(pos);
             updateBlendZone();
-            resetScene();
+        }
+
+        function setPointInputsDisabled(disabled) {
+            document.querySelectorAll('[id$="-x"], [id$="-y"], [id$="-z"]').forEach(input => {
+                if (/^(start|via|end)-/.test(input.id)) input.disabled = disabled;
+            });
+            document.querySelectorAll('.capture-pos-btn').forEach(btn => { btn.disabled = disabled; });
         }
 
         // 関節速度予測 ヘルパー関数
@@ -1178,7 +1183,7 @@
             isAnimating = true;
             setJogPanelEnabled(false);
             setRunButtonsDisabled(true);
-            document.getElementById('update-pos-btn').disabled = true;
+            setPointInputsDisabled(true);
 
             robot.visible = true;
             resetVelocityChart();
@@ -1206,7 +1211,7 @@
                 isAnimating = false;
                 setJogPanelEnabled(true);
                 setRunButtonsDisabled(false);
-                document.getElementById('update-pos-btn').disabled = false;
+                setPointInputsDisabled(false);
             };
 
             switch(selectedMode) {
@@ -1357,9 +1362,9 @@
             endEffector.getWorldPosition(pos);
             pos.set(...pos.toArray().map(v => Math.round(v * 10) / 10));
             ['x', 'y', 'z'].forEach(axis => { document.getElementById(`${point}-${axis}`).value = pos[axis]; });
-            const target = { start: [startPos, startMarkerGroup], via: [viaPos, viaMarkerGroup], end: [endPos, endMarkerGroup] }[point];
-            target[0].copy(pos);
-            target[1].position.copy(pos);
+            const [vec, marker] = getPointTarget(point);
+            vec.copy(pos);
+            marker.position.copy(pos);
             document.getElementById('error-message').textContent = '';
             updateBlendZone();
         }
@@ -1374,7 +1379,7 @@
             pathLines = [];
             setJogPanelEnabled(true);
             setRunButtonsDisabled(false);
-            document.getElementById('update-pos-btn').disabled = false;
+            setPointInputsDisabled(false);
             const errorMsg = document.getElementById('error-message');
             if (!errorMsg.textContent.includes('軌道')) { // Do not clear critical path error
                  errorMsg.textContent = '';
